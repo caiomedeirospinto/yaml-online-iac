@@ -1,0 +1,5 @@
+# Configuration temporal files
+config.json
+application.properties
+
+prepare/charts/*
