@@ -127,6 +127,7 @@ kn service update frontend --traffic frontend-v1=100 -n yaml-online
     oc new-app --name=mariadb --template=mariadb-persistent \
       -l=app=mariadb,app.kubernetes.io/part-of=yaml-online \
       -o yaml | oc apply -n yaml-online -f -
+    # TODO: Create data structure
     ```
 
 2. Create backend configuration files:
