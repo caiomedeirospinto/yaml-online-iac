@@ -108,6 +108,7 @@ kn service update frontend --revision-name v2 \
   --image image-registry.openshift-image-registry.svc:5000/yaml-online/frontend:v2 \
   --annotation=app.openshift.io/vcs-ref=d11224f1355ac98591f77ff7604632e157943ec1 \
   -n yaml-online
+kn service update frontend --traffic frontend-v2=100 -n yaml-online
 ```
 
 Try it again, you'll find some new features. And if you want, you always can take back to version 1:
@@ -174,7 +175,7 @@ kn service update frontend --traffic frontend-v1=100 -n yaml-online
     # Get base file
     curl https://raw.githubusercontent.com/caiomedeirospinto/yaml-online/master/src/assets/config/config.json -o config.json
     # Set backend values
-    cat config.json | jq '.onlineSession.enabled = true' \
+    cat config.json | jq '.onlineSession.enabled = true' | \
       jq '.onlineSession.backends.apiRest = $apiRest' --arg apiRest "$(oc get route.serving.knative.dev yaml-ms-online-session -o jsonpath="{ .status.url }" -n yaml-online)/online-session" | \
       jq '.onlineSession.backends.ws = $ws' --arg ws "${$(oc get route.serving.knative.dev yaml-ws-online-session -o jsonpath="{ .status.url }" -n yaml-online)/http/ws}/online-session" > config.json
     oc create configmap frontend-config --from-file=config.json=config.json -n yaml-online
@@ -197,6 +198,7 @@ kn service update frontend --traffic frontend-v1=100 -n yaml-online
       --image image-registry.openshift-image-registry.svc:5000/yaml-online/frontend:v3 \
       --annotation=app.openshift.io/vcs-ref=master \
       --mount /opt/app-root/src/assets/config=cm:frontend-config -n yaml-online
+    kn service update frontend --traffic frontend-v3=100 -n yaml-online
     ```
 
 Now try it and check if websocket is running well, if it's not just take back the frontend version:
